@@ -1,8 +1,14 @@
 import sys
+import os
 
 import requests
 from urllib3 import Retry
 from requests.adapters import HTTPAdapter
+
+import geocoder
+
+MAP_SIZE = (0.01, 0.01)
+
 
 def load_next_slide(counter):
     # Запрашиваем изображение.
@@ -23,7 +29,7 @@ def load_next_slide(counter):
         raise MyError()
 
 
-def refresh_map(map_coords: list[float, float], map_size: list[float, float]):
+def refresh_map(map_coords, map_size):
     map_params = {
         "ll": f'{map_coords[0]},{map_coords[1]}',
         "l": 'sat',
@@ -36,11 +42,19 @@ def refresh_map(map_coords: list[float, float], map_size: list[float, float]):
     session.mount('https://', adapter)
     response = session.get('https://static-maps.yandex.ru/1.x/',
                            params=map_params)
-    print(response)
-    with open('tmp.png', mode='wb') as tmp:
-        tmp.write(response.content)
-    return True
+    try:
+        with open(os.path.join('static', 'img', 'tmp.png'), "wb") as file:
+            file.write(response.content)
+    except IOError as ex:
+        print("Ошибка записи временного файла:", ex)
+        raise MyError()
+
+
+def load_map(address: str):
+    x, y = geocoder.get_coordinates(address)
+    refresh_map((x, y), MAP_SIZE)
+    print(geocoder.geocode(address))
 
 
 if __name__ == '__main__':
-    refresh_map([15, 13], [3, 3])
+    load_map('Париж')

@@ -1,8 +1,11 @@
 import json
-
+import os
 from flask import Flask, render_template, redirect
+from map_loader import load_map
+
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
 
 @app.route('/member')
@@ -14,7 +17,9 @@ def member():
 
 @app.route('/')
 def index():
-    return redirect('/member')
+    load_map('Париж')
+    params = {'image_source': os.path.join('static', 'img', 'tmp.png')}
+    return render_template('map_page.html', **params)
 
 
 if __name__ == '__main__':

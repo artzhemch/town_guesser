@@ -43,10 +43,9 @@ def get_coordinates(address: str):
     return float(toponym_longitude), float(toponym_lattitude)
 
 
-def get_adress_info(address: str):
+def get_address_info(address: str):
     """Получаем информацию об объекте по его адресу"""
     toponym = geocode(address)
     if not toponym:
         return None, None
     return toponym['metaDataProperty']['GeocoderMetaData']['AddressDetails']['Country']['CountryName']
-    # return toponym['description']

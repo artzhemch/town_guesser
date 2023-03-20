@@ -26,6 +26,7 @@ def all_towns():
     towns_list = db_sess.query(Towns.town_name).distinct().order_by(Towns.town_name)
     return render_template('all_towns.html', title='Все города', towns_list=towns_list)
 
+
 @app.route('/', methods=['POST', 'GET'])
 def index():
     global score, iteration_num, town_name

@@ -2,8 +2,9 @@
 
 {% block content %}
 <meta charset="UTF-8">
-<img src={{image_source}} alt="Ошибка загрузки картинки. Обновите страницу">
+<div><a href="/addtown"> Добавить свой город </a><br></div>
 <p> {{text}}</p>
+<img src={{image_source}} alt="Ошибка загрузки картинки. Обновите страницу">
 <form class="login_form" method="post">
 
 {% for variant in variants %}

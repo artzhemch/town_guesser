@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <body>
+<h1>Все города в базе данных:</h1>
+{% for town in towns_list %}
+{% if loop.index % 4 == 0 %}
+<div class="alert-success" role="alert">
+  <br><h3>{{town.town_name}}</h3>
+</div>
+{% elif loop.index % 4 == 1 %}
+<div class="alert-secondary" role="alert">
+  <br><h3>{{town.town_name}}</h3>
+</div>
+{% elif loop.index % 4 == 2 %}
+<div class="alert-warning" role="alert">
+  <br><h3>{{town.town_name}}</h3>
+</div>
+{% elif loop.index % 4 == 3 %}
+<div class="alert-danger" role="alert">
+  <br><h3>{{town.town_name}}</h3>
+</div>
+{% endif %}
+{% endfor %}
+{% endblock %}

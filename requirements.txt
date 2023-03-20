@@ -1,0 +1,5 @@
+sqlalchemy
+wtforms
+flask
+requests
+urllib3

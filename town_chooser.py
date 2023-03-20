@@ -33,7 +33,7 @@ def random_town_generator():
 def choose_random_town(remake=False):
     """remake: загрузить снова БД"""
     global all_variants
-    if not all_variants:
+    if not all_variants or remake:
         initiliaze_from_db()
     try:
         x = random.choice(list(all_variants))

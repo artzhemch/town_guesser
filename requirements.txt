@@ -1,0 +1,6 @@
+sqlalchemy
+wtforms
+flask
+requests
+urllib3
+flask_wtf

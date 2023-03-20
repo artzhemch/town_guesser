@@ -15,14 +15,16 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 score = 0
 iteration_num = 0
+NUMBER_OF_ROUNDS = 6
 town_name = '_'
 
 
-@app.route('/member')
-def member():
-    with open("templates/members.json", "rt", encoding="utf8") as f:
-        members_list = json.loads(f.read())
-    return render_template('member.html', members_list=members_list)
+@app.route('/all_towns')
+def all_towns():
+    db_session.global_init("db/town_guesser.sqlite")
+    db_sess = db_session.create_session()
+    towns_list = db_sess.query(Towns.town_name).distinct().order_by(Towns.town_name)
+    return render_template('all_towns.html', title='Все города', towns_list=towns_list)
 
 
 @app.route('/', methods=['POST', 'GET'])
@@ -34,11 +36,12 @@ def index():
         return current_page
 
     elif request.method == 'POST':
+        iteration_num += 1
         answer = request.form.get('chosen_town', '')
         if answer == town_name:
             score += 1
         print(score, iteration_num)
-        if iteration_num >= 3:
+        if iteration_num >= NUMBER_OF_ROUNDS:
             return redirect(url_for('scoreboard'))
         town_name, current_page = game_loop()
         return current_page
@@ -48,38 +51,12 @@ def index():
 def scoreboard():
     global score, iteration_num
     params = {'score': score,
-              'back_href': '/'}
+              'back_href': '/',
+              'max_score': NUMBER_OF_ROUNDS}
     print(params)
     page = render_template('score_page.html', title='Итоговый счёт', **params)
     iteration_num, score = 0, 0
     return page
-
-
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    form = RegisterForm()
-    if form.validate_on_submit():
-        if form.password.data != form.password_again.data:
-            return render_template('register.html', title='Register', form=form,
-                                   message="Passwords don't match")
-        db_sess = db_session.create_session()
-        if db_sess.query(User).filter(User.email == form.email.data).first():
-            return render_template('register.html', title='Register', form=form,
-                                   message="This user already exists")
-        user = User(
-            name=form.name.data,
-            surname=form.surname.data,
-            age=form.age.data,
-            position=form.position.data,
-            email=form.email.data,
-            speciality=form.speciality.data,
-            address=form.address.data
-        )
-        user.set_password(form.password.data)
-        db_sess.add(user)
-        db_sess.commit()
-        return redirect('/login')
-    return render_template('register.html', title='Регистрация', form=form)
 
 
 @app.route('/addtown', methods=['GET', 'POST'])
@@ -100,8 +77,6 @@ def addtown():
 
 def game_loop():
     """Создаёт страницу для одного шага выбора. Возвращает её и верный ответ"""
-    global iteration_num
-    iteration_num += 1
     town = choose_random_town()
     print(town)
     load_map(town)

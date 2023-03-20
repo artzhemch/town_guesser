@@ -2,12 +2,18 @@
 
 {% block content %}
 <meta charset="UTF-8">
-<img src={{image_source}} alt="Ошибка загрузки картинки. Обновите страницу">
+<div><a href="/addtown"> Добавить свой город </a><br></div>
 <p> {{text}}</p>
+<img src={{image_source}} alt="Ошибка загрузки картинки. Обновите страницу">
 <form class="login_form" method="post">
 
 {% for variant in variants %}
-<input class="form-check-input" type="radio" name="chosen_town" id="choose" value="{{variant}}">
+<input class="form-check-input"
+       type="radio"
+       name="chosen_town"
+       id="choose"
+       value="{{variant}}"
+       {% if loop.index == 1 %} checked {% endif %}>
     <label class="form-check-label" for="choose">
         {{variant}}
     </label>

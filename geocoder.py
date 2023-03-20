@@ -1,9 +1,12 @@
 import requests
-
-API_KEY = '0387b561-9bdb-4062-866e-2fd58446914e'
+from functools import lru_cache
+# API_KEY = '0387b561-9bdb-4062-866e-2fd58446914e'
 API_KEY = "40d1649f-0493-4b70-98ba-98533de7710b"
 
-def geocode(address):
+
+@lru_cache(100)
+def geocode(address: str):
+    """Нахождение объекта по названию. Результаты кешируются"""
     # Собираем запрос для геокодера.
     geocoder_request = f"http://geocode-maps.yandex.ru/1.x/?apikey={API_KEY}" \
                        f"&geocode={address}&format=json"
@@ -27,14 +30,23 @@ def geocode(address):
     return features[0]["GeoObject"] if features else None
 
 
-# Получаем координаты объекта по его адресу.
-def get_coordinates(address):
+def get_coordinates(address: str):
+    """Получаем координаты объекта по его адресу"""
     toponym = geocode(address)
     if not toponym:
         return None, None
 
     # Координаты центра топонима:
     toponym_coodrinates = toponym["Point"]["pos"]
-    # Широта, преобразованная в плавающее число:
+    # Широта, преобразованная во float:
     toponym_longitude, toponym_lattitude = toponym_coodrinates.split(" ")
     return float(toponym_longitude), float(toponym_lattitude)
+
+
+def get_adress_info(address: str):
+    """Получаем информацию об объекте по его адресу"""
+    toponym = geocode(address)
+    if not toponym:
+        return None, None
+    return toponym['metaDataProperty']['GeocoderMetaData']['AddressDetails']['Country']['CountryName']
+    # return toponym['description']

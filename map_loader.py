@@ -47,13 +47,12 @@ def refresh_map(map_coords, map_size):
             file.write(response.content)
     except IOError as ex:
         print("Ошибка записи временного файла:", ex)
-        raise MyError()
+        raise IOError
 
 
 def load_map(address: str):
     x, y = geocoder.get_coordinates(address)
     refresh_map((x, y), MAP_SIZE)
-    print(geocoder.geocode(address))
 
 
 if __name__ == '__main__':

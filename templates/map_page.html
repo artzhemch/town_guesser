@@ -3,4 +3,16 @@
 {% block content %}
 <meta charset="UTF-8">
 <img src={{image_source}} alt="Ошибка загрузки картинки. Обновите страницу">
+<p> {{text}}</p>
+<form class="login_form" method="post">
+
+{% for variant in variants %}
+<input class="form-check-input" type="radio" name="chosen_town" id="choose" value="{{variant}}">
+    <label class="form-check-label" for="choose">
+        {{variant}}
+    </label>
+    <br>
+{% endfor %}
+    <button type="submit" class="btn btn-primary">Отправить</button>
+</form>
 {% endblock %}
